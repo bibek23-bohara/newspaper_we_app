@@ -1,13 +1,23 @@
 from datetime import timedelta
-from django.http import JsonResponse
-from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.shortcuts import render, redirect
-from django.utils import timezone
-from django.views.generic import ListView, DetailView, TemplateView, View
-from newspaper_app.models import Post, Category 
-from newspaper_app.forms import ContactForm,NewsletterForm, CommentForm
+
 from django.contrib import messages
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Q
+from django.http import JsonResponse
+from django.shortcuts import redirect, render
+from django.utils import timezone
+from django.views.generic import DetailView, ListView, TemplateView, View
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse_lazy
+from django.utils import timezone
+from django.views.generic import (CreateView, DeleteView, UpdateView, View)
+from newspaper_app.forms import CommentForm, ContactForm, NewsletterForm, PostForm
+from newspaper_app.models import Category, Post
+
+
 class HomeView(ListView):
     model = Post
     template_name ="aznews/home.html"
@@ -198,5 +208,148 @@ class CommentView(View):
                 self.template_name,
                 {"post":post,"form":form},
             )
+        
+
+
+
+
+
+# def post_list(request):
+#     posts = Post.objects.filter(
+#         published_at__isnull=False).order_by("-published_at")
+#     return render(
+#         request,
+#         "post_list.html",
+#         {"posts": posts},
+
+
+class DraftListView(ListView):
+    model=Post
+    template_name = "news_admin/post_list.html"
+    context_object_name ="posts"
+    queryset = Post.objects.filter(
+        published_at__isnull=True).order_by("-published_at")
+
+# @login_required
+# def draft_list(request):
+#     # ORM => Objects Relationship Mapping => convets to sQL
+#     posts = Post.objects.filter(
+#         published_at__isnull=True).order_by("-published_at")
+#     return render(
+#         request,
+#         "post_list.html",
+#         {"posts": posts},
+
+#     ) 
+
+
+# def post_detail(request, pk):
+#     #post = Post.objects.get(pk=pk)
+#     post = get_object_or_404(Post, pk=pk)
+#     return render(
+#         request,
+#         "post_detail.html",
+#         {"post": post},
+#     )
+
+class PostDeleteView(LoginRequiredMixin,DeleteView):
+    model =Post
+    success_url = reverse_lazy("post-list")
+
+    def form_valid(self,form):
+        messages.success(self.request, "post was successfully deleted")
+        return super().form_valid(form)
+# @login_required
+# def post_delete(request, pk):
+#     #post = Post.objects.get(pk=pk)
+#     post = get_object_or_404(Post, pk=pk)
+#     post.delete()
+#     messages.success(request,"post was successfully delete")
+#     return redirect("post-list")
+
+
+
+
+class PostCreateView(LoginRequiredMixin, CreateView):
+    model = Post
+    form_class = PostForm
+    template_name ="news_admin/post_create.html"
+    success_url = reverse_lazy("draft-list")
+
+    def form_valid(self,form):
+        form.instance.author = self.request.user
+        messages.success(self.request, "post was successfully created")
+        return super().form_valid(form)
+
+
+
+
+def post_create(request):
+    print('9999999III')
+    form = PostForm()
+    if request.method == "POST":
+        form = PostForm(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
+            messages.success(request,"post was successfully created")
+            return redirect("post-list")
+        else:
+            messages.error(request,"post was not created")
+    return render(
+        request,
+        "post_create.html",
+        {"form": form},
+    )
+
+class PostPublishView(LoginRequiredMixin, View):
+    def get(self, request, pk, *args, **kwargs):
+        post = get_object_or_404(Post, pk = pk)
+        post.published_at = timezone.now()
+        post.save()
+        messages.success(request,"post was successfully published")
+        return redirect("post-list")
+        
+
+# @login_required
+# def post_publish(request, pk):
+#     # post =Post.objects.get(pk=pk)
+#     post = get_object_or_404(Post, pk=pk)
+#     post.published_at = timezone.now()
+#     post.save()
+#     messages.success(request,"post was successfully published")
+#     return redirect("post-list")
+
+
+
+
+class PostUpdateView(LoginRequiredMixin, UpdateView):
+    model= Post
+    form_class =PostForm
+    template_name ="news_admin/post_create.html"
+
+# @login_required
+# def post_update(request,pk):
+#     post = Post.objects.get(pk=pk)
+#     form = PostForm(instance=post)
+#     if request.method == "POST":
+#         form = PostForm(request.POST, instance=post)
+#         if form.is_valid():
+#             form.save()
+#             messages.success(request,"post was successfully updated")
+#             return redirect("post-list")
+#         else:
+#             messages.success(request,"post was not updated ")
+#     return render(
+#         request,
+#         "post_create.html",
+#         {"form": form},
+#     )
+
+
+
+def handler404(request,exception, template_name="404.html"):
+    return render(request, template_name, status=404)
 
 

@@ -37,6 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    #third party app
+    "django_summernote",
+    #custtome app
     "newspaper_app",
 ]
 
@@ -138,3 +141,8 @@ MESSAGE_TAGS = {
 
 LOGIN_REDIRECT_URL ='/'
 LOGOUT_REDIRECT_URL ='/'
+
+SUMMERNOTE_CONFIG ={
+    "width":"100%",
+    "height":"600",
+}
