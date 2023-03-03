@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Personal Blog
+    <title>NEWSPAPER
     {% block title %}
     {% endblock title %}
     </title>
@@ -34,6 +34,13 @@
         <span class="material-symbols-outlined lg-icons">edit_square
         </span>
     </a>
+    <a href="tag-list" class="top-menu">
+        <span class="material-symbols-outlined lg-icons">sell
+        </span>
+    <a href="{% url 'login' %}" class="top-menu">
+        <span class="material-symbols-outlined lg-icons">
+            category
+        </span>
     {% else %}
     <a href="{% url 'login' %}" class="top-menu">
         <span class="material-symbols-outlined lg-icons">
@@ -43,7 +50,7 @@
        {% endif %}
         <h1>
             <a href="/">
-                <img src="{% static  "img/favicon.ico" %}" alt="Personal Blog" width="90px">Personal Blog
+                <img src="{% static  "img/favicon.ico" %}" alt="Personal Blog" width="90px">ONLINEKHABAR
             </a>
         </h1>
     </div>

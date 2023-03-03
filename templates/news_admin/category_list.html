@@ -1,0 +1,18 @@
+{% extends "news_admin/base.html" %}
+{% block content %}
+    {% for category in categories %}
+        <div class="category">
+            {% if category.created_at %}
+            <div class="date">
+                {{ category.created_at }}
+            </div>
+            {% endif %}
+            <h1>
+                <a href="#">{{ category.name }}</a>
+            </h1>
+        <div class= "mb-4">
+        
+        </div>
+        </div>
+    {% endfor %}
+{% endblock content %}

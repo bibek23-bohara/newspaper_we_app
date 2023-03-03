@@ -1,0 +1,17 @@
+{% extends "news_admin/base.html" %}
+{% block content %}
+    {% for tag in tags %}
+        <div class= "tag">
+            {% if tag.published_at %}
+            <div class="date">
+                {{ tag.created_at }}
+            </div>
+            {% endif %}
+            <h1>
+            {{ tag.name }}</a>
+            </h1>
+            <div></div>
+        
+        </div>
+    {% endfor %}
+{% endblock content %}

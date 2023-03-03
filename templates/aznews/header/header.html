@@ -16,8 +16,12 @@
                             <div class="header-info-right">
                                 <ul class="header-social">    
                                     {% if user.is_authenticated %}
+                                    <li> <a href="{% url 'category-create' %}"><i class="fas fa-newspaper"></i></a></li>
+                                    <li> <a href="{% url 'tag-create' %}"><i class="fas fa-tags"></i></a></li>
                                     <li><a href="{% url 'post-create' %}"><i class="fas fa-plus"></i></a></li>
+                                    <li><a href="{% url 'draft-list' %}"><i class="fas fa-tasks"></i></a></li>
                                     <li> <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i></a></li>
+
                                     {% else %}
                                     <li><a href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i></a></li>
                                    {% endif %}
@@ -67,7 +71,7 @@
                                         <li><a href="{% url 'about' %}">About</a></li>
                                         <li><a href="{% url 'post-list' %}">Latest News</a></li>
                                         <li><a href="{% url 'contact' %}">Contact</a></li>
-                                        <li><a href="#">categories</a>
+                                        <li><a href="">categories</a>
                                             <ul class="submenu">
                                                 {% for category in categories %}
                                                 <li>
@@ -93,8 +97,8 @@
                             <div class="header-right-btn f-right d-none d-lg-block">
                                 <i class="fas fa-search special-tag"></i>
                                 <div class="search-box">
-                                    <form action="#">
-                                        <input type="text" placeholder="Search">
+                                    <form action="{% url 'post-search' %}" method="get">
+                                        <input type="text" placeholder="Search" name="query">
                                         
                                     </form>
                                 </div>

@@ -11,8 +11,8 @@
          <li><a href="#"><i class="fa fa-user"></i>{{post.author.username}}</a></li>
           <li><a href="#"><i class="fa fa-tag"></i>{{post.tag.all|join:","}}</a></li>
           <li><a href="#"><i class="fa fa-calender"></i>{{post.published_at|date:"d M Y"}}</a></li>
-          <li><a href="#"><i class="fa fa-comments"></i> {{ post.latest_comment.count }} Comments</a></li>
-          <li><a href="#"><i class="fa fa-eye"></i> {{ post.view_count }} Views</a></li>
+          <li><a href="#"><i class="fa fa-comments"></i> {{ post.latest_comment.count }}Comments</a></li>
+          <li><a href="#"><i class="fa fa-eye"></i> {{ post.view_count }}Views</a></li>
        </ul>
        {{ post.content|safe}}
     </div>

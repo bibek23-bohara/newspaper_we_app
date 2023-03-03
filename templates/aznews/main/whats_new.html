@@ -45,7 +45,7 @@
                                                 </div>
                                                 <div class="what-cap">
                                                     <span class="color1">{{ post.category.name }}</span>
-                                                    <h4><a href="{% url 'post-detail' featured_post.pk %}">{{ post.title }}</a></h4>
+                                                    <h4><a href="{% url 'post-detail' post.pk %}">{{ post.title }}</a></h4>
                                                 </div>
                                             </div>
                                         </div>
@@ -67,7 +67,7 @@
                                                 </div>
                                                 <div class="what-cap">
                                                     <span class="color1">{{ whats_new_category.name}}</span>
-                                                    <h4><a href="{% url 'post-detail' featured_post.pk %}">{{ post.title }}</a></h4>
+                                                    <h4><a href="{% url 'post-detail' whats_new_category.pk %}">{{ post.title }}</a></h4>
                                                 </div>
                                             </div>
                                         </div>

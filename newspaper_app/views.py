@@ -14,8 +14,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views.generic import (CreateView, DeleteView, UpdateView, View)
-from newspaper_app.forms import CommentForm, ContactForm, NewsletterForm, PostForm
-from newspaper_app.models import Category, Post
+from newspaper_app.forms import CommentForm, ContactForm, NewsletterForm, PostForm, TagForm, CategoryForm
+from newspaper_app.models import Category, Post, Tag
 
 
 class HomeView(ListView):
@@ -42,9 +42,16 @@ class PostDetailView(DetailView):
     template_name = "aznews/detail.html"
     context_object_name ="post"
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.filter(status="active", published_at__isnull=False)
+    
+
     def get_context_data(self, * args, **kwargs):
         context = super().get_context_data(* args, **kwargs)
         obj = self.get_object()
+        obj.views_count += 1
+        obj.save()
         context["previous_post"]=(
             Post.objects.filter(status="active", published_at__isnull=False, id__lt=obj.id).
             order_by("-id")
@@ -225,7 +232,7 @@ class CommentView(View):
 
 class DraftListView(ListView):
     model=Post
-    template_name = "news_admin/post_list.html"
+    template_name = "news_admin/draft_list.html"
     context_object_name ="posts"
     queryset = Post.objects.filter(
         published_at__isnull=True).order_by("-published_at")
@@ -254,7 +261,7 @@ class DraftListView(ListView):
 
 class PostDeleteView(LoginRequiredMixin,DeleteView):
     model =Post
-    success_url = reverse_lazy("post-list")
+    success_url = reverse_lazy("draft-list")
 
     def form_valid(self,form):
         messages.success(self.request, "post was successfully deleted")
@@ -309,7 +316,7 @@ class PostPublishView(LoginRequiredMixin, View):
         post.published_at = timezone.now()
         post.save()
         messages.success(request,"post was successfully published")
-        return redirect("post-list")
+        return redirect("post-detail", post.pk)
         
 
 # @login_required
@@ -352,4 +359,66 @@ class PostUpdateView(LoginRequiredMixin, UpdateView):
 def handler404(request,exception, template_name="404.html"):
     return render(request, template_name, status=404)
 
+
+class DraftDetailView(DetailView):
+    model = Post
+    template_name = "news_admin/draft_detail.html"
+    context_object_name = "post"
+
+
+
+###### TAG CRUD #####
+
+
+class TagListView(LoginRequiredMixin, ListView):
+    model = Tag
+    template_name = "news_admin/tag_list.html"
+    context_object_name = "tags"
+
+
+class TagCreateView(LoginRequiredMixin, CreateView):
+    model = Tag
+    form_class = TagForm
+    template_name ="news_admin/post_create.html"
+    success_url = reverse_lazy("tag-list")
+
+
+class TagUpdateView(LoginRequiredMixin, UpdateView):
+    model= Post
+    form_class =PostForm
+    template_name ="news_admin/tag-list.html"
+
+
+class TagDeleteView(LoginRequiredMixin,View):
+    def get(self, request, pk, *args, **kwargs):
+        tag = get_object_or_404(Tag, pk=pk)
+        tag.delete()
+        messages.success(self.request, "tag was sucessfully deleted")
+        return redirect("tag-list")
+    
+# Category CRUD
+class CategoryListView(LoginRequiredMixin, ListView):
+    model = Category
+    template_name = "news_admin/category_list.html"
+    context_object_name = "category"
+
+
+class CategoryCreateView(LoginRequiredMixin, CreateView):
+    model = Category
+    form_class = CategoryForm
+    template_name ="news_admin/category_create.html"
+    success_url = reverse_lazy("category-list")
+
+class CategoryUpdateView(LoginRequiredMixin, UpdateView):
+    model= Post
+    form_class =PostForm
+    template_name ="news_admin/category-list.html"
+
+
+class CategoryDeleteView(LoginRequiredMixin,View):
+    def get(self, request, pk, *args, **kwargs):
+        tag = get_object_or_404(Tag, pk=pk)
+        tag.delete()
+        messages.success(self.request, "category was sucessfully deleted")
+        return redirect("category-list")
 

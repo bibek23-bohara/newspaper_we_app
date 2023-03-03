@@ -21,7 +21,7 @@
                                 <div class="weekly2-caption">
                                     <span class="color1">{{weekly_top_post.category.name}}</span>
                                     <p>{{weekly_top_post.published_at|date:"j M Y" }}</p>
-                                    <h4><a href="{% url 'post-detail' featured_post.pk %}">{{weekly_top_post.title|truncatechars:44}}</a></h4>
+                                    <h4><a href="{% url 'post-detail' weekly_top_post.pk %}">{{ weekly_top_post.title|truncatechars:44 }}</a></h4>
                                 </div>
                             </div> 
                             {% endfor %}
